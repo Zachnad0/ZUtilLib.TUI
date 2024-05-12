@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationIcon>buildicon2.ico</ApplicationIcon>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <SignAssembly>False</SignAssembly>
+    <Title>ZUtilLib.TUI</Title>
+    <Authors>Zachnad0</Authors>
+    <Company />
+    <Description>A simple and intuitive text user-interface library that supports at least Windows 10 and Debian Linux.
+Should support listening for keys, and multiple virtual sub-windows.</Description>
+    <Copyright>BSD 3-Clause License</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon>packageicon.jpg</PackageIcon>
+    <PackageTags>console;tui;text ui;</PackageTags>
+    <PackageReleaseNotes>0.1.0:
+</PackageReleaseNotes>
+    <PackageOutputPath>bin\Package</PackageOutputPath>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <FileAlignment>512</FileAlignment>
+    <IsAotCompatible>True</IsAotCompatible>
+    <IsTrimmable>False</IsTrimmable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <FileAlignment>512</FileAlignment>
+    <IsAotCompatible>True</IsAotCompatible>
+    <IsTrimmable>False</IsTrimmable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="buildicon2.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\packageicon.jpg">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
