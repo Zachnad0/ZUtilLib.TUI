@@ -21,6 +21,11 @@ Should support listening for keys, and multiple virtual sub-windows.</Descriptio
     <PackageOutputPath>bin\Package</PackageOutputPath>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Version>0.1.0</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/Zachnad0/ZUtilLib.TUI</RepositoryUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -42,10 +47,24 @@ Should support listening for keys, and multiple virtual sub-windows.</Descriptio
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\packageicon.jpg">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
+    <PackageReference Include="Zachnad0.UtilLib" Version="3.1.1" />
   </ItemGroup>
 
 </Project>
