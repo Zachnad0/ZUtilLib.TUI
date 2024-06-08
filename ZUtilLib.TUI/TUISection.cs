@@ -1,6 +1,6 @@
 ﻿namespace ZUtilLib.TUI
 {
-	public class TUISection : ITUIElement
+	public class TUISection
 	{
 	}
 }

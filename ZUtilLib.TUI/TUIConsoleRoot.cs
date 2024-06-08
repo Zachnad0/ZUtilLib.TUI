@@ -2,15 +2,15 @@
 
 namespace ZUtilLib.TUI
 {
-	public sealed class TUIFrame : ITUIElement
+	public sealed class TUIConsoleRoot
 	{
 		/// <summary>
 		/// The current instance of the running frame.
 		/// </summary>
-		public static TUIFrame? Instance { get; private set; }
+		public static TUIConsoleRoot? Instance { get; private set; }
 		private readonly List<TUISection> _sections = new();
 
-		public TUIFrame()
+		public TUIConsoleRoot()
 		{
 			Instance ??= this;
 		}
