@@ -18,9 +18,11 @@ namespace ZUtilLib.TUI
 
 		private readonly TUISettings _settings;
 		private readonly ushort _totalWidth, _totalHeight;
+		/// <summary>[leftX][topY], from top left to bottom right.</summary>
+		private readonly CharPoint[][] _currFrameRenderMatrix;
 
-		public TUIConsoleRoot(TUISettings settings, params TUISection[] childSections)
-			: base(null, 0, 0, 0, 0, int.MinValue, Color.Red, Color.Red, Color.Red, childSections)
+		public TUIConsoleRoot(TUISettings settings)
+			: base(null, 0, 0, 0, 0, int.MinValue, settings.DefaultTextColor, settings.DefaultBackgroundColor, settings.DefaultBorderColor)
 		{
 			// Set instance and readonly fields
 			Instance ??= this;
@@ -34,11 +36,20 @@ namespace ZUtilLib.TUI
 			// Apply calculated properties
 			Width = _totalWidth;
 			Height = _totalHeight;
+
+			// Initialize frame render matrix
+			_currFrameRenderMatrix = new CharPoint[_totalWidth][];
+			for (ushort i = 0; i < _currFrameRenderMatrix.Length; i++)
+				_currFrameRenderMatrix[i] = new CharPoint[_totalHeight];
 		}
 
-		private static (uint width, uint height) GetWindowDimensions()
+		private static (ushort width, ushort height) GetWindowDimensions()
 		{
-			return ((uint)Console.WindowWidth, (uint)Console.WindowHeight);
+			try
+			{
+				return ((ushort)Console.WindowWidth, (ushort)Console.WindowHeight);
+			}
+			catch { return (0, 0); }
 		}
 	}
 }
