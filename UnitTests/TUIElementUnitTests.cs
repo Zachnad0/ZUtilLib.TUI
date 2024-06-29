@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Drawing;
 using System.Linq;
 using ZUtilLib.TUI;
 
@@ -47,6 +48,26 @@ namespace UnitTests
 			Assert.IsTrue(parent.GetChildren().Count == o);
 			Assert.IsTrue(tcr.GetChildren().Count == c);
 			Assert.IsTrue(tcr.GetAllDescendants().Count == c + o);
+		}
+
+		[TestMethod]
+		public void TestTUIRenderPipeline()
+		{
+			TUIConsoleRoot tcr = new(new());
+
+			// Generate test elements
+			ushort c = (ushort)Random.Shared.Next(10, 200);
+			for (ushort i = 0; i < c; i++)
+			{
+				//ushort sLen = (ushort)Random.Shared.Next(5, 30);
+				//(ushort winWidth, ushort winHeight) = TUIConsoleRoot.GetTotalWindowDimensions();
+				//ushort posX = (ushort)Random.Shared.Next(0, winWidth - sLen), posY = (ushort)Random.Shared.Next(0, winHeight - sLen);
+				//Assert.IsNotNull(new TUISection(tcr, sLen, sLen, posX, posY, Random.Shared.Next(int.MinValue + 1, int.MaxValue), null, null, null));
+
+				Assert.IsNotNull(new TUISection(tcr, 0, 0, 0, 0, Random.Shared.Next(int.MinValue + 1, int.MaxValue), null, null, null));
+			}
+
+			tcr.RenderFrame();
 		}
 	}
 }

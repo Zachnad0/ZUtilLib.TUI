@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace ZUtilLib.TUI
 {
@@ -17,9 +18,15 @@ namespace ZUtilLib.TUI
 		public static TUIConsoleRoot? Instance { get; private set; }
 
 		private readonly TUISettings _settings;
+		/// <summary>
+		/// Total dimension length, excluding padding.
+		/// </summary>
 		private readonly ushort _totalWidth, _totalHeight;
-		/// <summary>[leftX][topY], from top left to bottom right.</summary>
-		private readonly CharPoint[][] _currFrameRenderMatrix;
+		/// <summary>
+		/// [leftX][topY], from top left to bottom right, excluding padding.
+		/// <br/>Essentially the most recent final result from the render pipeline.
+		/// </summary>
+		private CharPoint[,] _currFrameRenderMatrix;
 
 		public TUIConsoleRoot(TUISettings settings)
 			: base(null, 0, 0, 0, 0, int.MinValue, settings.DefaultTextColor, settings.DefaultBackgroundColor, settings.DefaultBorderColor)
@@ -29,7 +36,7 @@ namespace ZUtilLib.TUI
 			_settings = settings;
 
 			// Ignore padding if it shrinks it to zero or less
-			var winDim = GetWindowDimensions();
+			var winDim = GetTotalWindowDimensions();
 			_totalWidth = (ushort)((_settings.PaddingHoriz * 2 < winDim.width) ? (winDim.width - (2 * _settings.PaddingHoriz)) : winDim.width);
 			_totalHeight = (ushort)((_settings.PaddingVert * 2 < winDim.height) ? (winDim.height - (2 * _settings.PaddingVert)) : winDim.height);
 
@@ -38,12 +45,10 @@ namespace ZUtilLib.TUI
 			Height = _totalHeight;
 
 			// Initialize frame render matrix
-			_currFrameRenderMatrix = new CharPoint[_totalWidth][];
-			for (ushort i = 0; i < _currFrameRenderMatrix.Length; i++)
-				_currFrameRenderMatrix[i] = new CharPoint[_totalHeight];
+			_currFrameRenderMatrix = new CharPoint[_totalWidth, _totalHeight];
 		}
 
-		private static (ushort width, ushort height) GetWindowDimensions()
+		public static (ushort width, ushort height) GetTotalWindowDimensions()
 		{
 			try
 			{
@@ -51,5 +56,30 @@ namespace ZUtilLib.TUI
 			}
 			catch { return (0, 0); }
 		}
+
+		public (ushort width, ushort height) GetRenderDimensions() => (Instance._totalWidth, Instance._totalHeight);
+
+		public void RenderFrame()
+		{
+			// Render in parallel, then store each frame
+			Dictionary<TUIElementBase, CharPoint[][]> finalRenders = new();
+			finalRenders.EnsureCapacity(AllElements.Count);
+			Parallel.ForEach(AllElements, element =>
+			{
+				var render = element.RenderElementMatrix();
+				lock (finalRenders) if (!finalRenders.TryAdd(element, render)) throw new Exception("This should never happen.");
+			});
+
+			// Sort elements from lowest to highest Z-index
+			AllElements.Sort((x, y) => Math.Sign((long)x.ZIndex - (long)y.ZIndex));
+			// Then stack on frames in that order
+			_currFrameRenderMatrix = new CharPoint[_totalWidth, _totalHeight];
+			for (uint i = 0; i < AllElements.Count; i++)
+			{
+				// CONTINUE HERE with writing the stack of rendered matrices in order
+			}
+		}
+
+		internal override CharPoint[][] RenderElementMatrix() => throw new NotImplementedException();
 	}
 }

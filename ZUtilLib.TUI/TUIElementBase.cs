@@ -1,14 +1,17 @@
 ﻿using ZUtilLib;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace ZUtilLib.TUI
 {
 	public abstract class TUIElementBase // TODO implement unit tests
 	{
-		public static List<TUIElementBase> AllElements { get; private set; } = new();
+		/// <summary>
+		/// A copy of the hashset containing every element.
+		/// </summary>
+		public static List<TUIElementBase> AllElements { get => new(_allElements); }
+		private static HashSet<TUIElementBase> _allElements = new();
 
 		// Inheritable Properties
 		public ushort Width { get; protected set; }
@@ -33,6 +36,7 @@ namespace ZUtilLib.TUI
 			bool invalidArg = false;
 			try
 			{
+#pragma warning disable CS8602
 				Width = width ?? _parent.Width; // Will throw exception if _parent is null
 				Height = height ?? _parent.Height;
 				XLeftPos = xLeftPos ?? _parent.XLeftPos;
@@ -41,6 +45,7 @@ namespace ZUtilLib.TUI
 				TextColor = textColor ?? _parent.TextColor;
 				BackgroundColor = backgroundColor ?? _parent.BackgroundColor;
 				BorderColor = borderColor ?? _parent.BorderColor;
+#pragma warning restore CS8602
 			}
 			catch
 			{
@@ -54,8 +59,8 @@ namespace ZUtilLib.TUI
 			}
 
 			// Clear all elements if this is a new root (just to be sure)
-			if (IsRootElement()) AllElements = new();
-			AllElements.Add(this);
+			if (IsRootElement()) _allElements = new();
+			_allElements.Add(this);
 		}
 
 		/// <summary>
@@ -64,17 +69,26 @@ namespace ZUtilLib.TUI
 		public bool IsRootElement() => _parent == null;
 
 		/// <summary>Finds all of this element's direct children.</summary>
-		public List<TUIElementBase> GetChildren() => AllElements.Where(e => e._parent == this).ToList();
+		public List<TUIElementBase> GetChildren() => _allElements.Where(e => e._parent == this).ToList();
 
 		/// <summary>
-		/// Finds every single descendant of this element.
+		/// Finds every single descendant of this element.<br/>Warning: Rather slow.
 		/// </summary>
 		public List<TUIElementBase> GetAllDescendants()
 		{
-			// CONTINUE HERE write this
-			return new();
+			// Select each child element, and their own children, and so forth
+			List<TUIElementBase> allDescendants = new(), subChildren = GetChildren();
+			do
+			{
+				allDescendants.AddRange(subChildren);
+				subChildren = subChildren.SelectMany(e => e.GetChildren()).ToList();
+
+			} while (subChildren.Count > 0);
+
+			allDescendants.RemoveAll(e => allDescendants.Count(e.Equals) > 1);
+			return allDescendants;
 		}
 
-		// TODO implement drawing to local sub-window CharPoint matrix then passing it forward to be drawn on by the next higher-up z-index element
+		internal abstract CharPoint[][] RenderElementMatrix();
 	}
 }
