@@ -8,10 +8,12 @@ namespace ZUtilLib.TUI
 	/// </summary>
 	public sealed class TUISection : TUIElementBase
 	{
-		public TUISection(TUIElementBase? parentElement, ushort? width, ushort? height, ushort? xLeftPos, ushort? yTopPos, int? zIndex, ConsoleColor? textColor, ConsoleColor? backgroundColor, ConsoleColor? borderColor)
+		public TUISection(TUIElementBase? parentElement, ushort? width, ushort? height, short? xLeftPos, short? yTopPos, int? zIndex, ConsoleColor? textColor, ConsoleColor? backgroundColor, ConsoleColor? borderColor)
 			: base(parentElement ?? throw new ArgumentNullException(nameof(parentElement)), width, height, xLeftPos, yTopPos, zIndex, textColor, backgroundColor, borderColor)
 		{
 			// It really just is what it is
 		}
+
+		internal override CharPoint[,] RenderElementMatrix() => throw new NotImplementedException();
 	}
 }

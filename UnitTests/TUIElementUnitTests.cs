@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Drawing;
 using System.Linq;
+using ZUtilLib;
 using ZUtilLib.TUI;
 
 namespace UnitTests
@@ -68,6 +69,25 @@ namespace UnitTests
 			}
 
 			tcr.RenderFrame();
+		}
+
+		[TestMethod]
+		public void TestMatrixShift()
+		{
+			int[,] m = Random.Shared.NextMatrix(10, 10)
+				.ToJaggedMatrix()
+				.Select(a => a
+					.Select(n => (int)Math.Round(n) + 1)
+					.ToArray())
+				.ToArray()
+				.ToNonJaggedMatrix();
+
+			string mr1 = m.ToJaggedMatrix().ToReadableString("");
+			int[,] e;
+			string mr2 = (e = TUIConsoleRoot.OffsetMatrix(m, 2, 4)).ToJaggedMatrix().ToReadableString("");
+			string mr3 = TUIConsoleRoot.OffsetMatrix(e, -2, -4).ToJaggedMatrix().ToReadableString("");
+			Assert.AreNotEqual(mr1, mr2);
+			Assert.AreNotEqual(mr2, mr3);
 		}
 	}
 }

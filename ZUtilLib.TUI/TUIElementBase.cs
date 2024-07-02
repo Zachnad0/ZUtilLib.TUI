@@ -16,8 +16,8 @@ namespace ZUtilLib.TUI
 		// Inheritable Properties
 		public ushort Width { get; protected set; }
 		public ushort Height { get; protected set; }
-		public ushort XLeftPos { get; protected set; }
-		public ushort YTopPos { get; protected set; }
+		public short XLeftPos { get; protected set; }
+		public short YTopPos { get; protected set; }
 		public int ZIndex { get; protected set; }
 		public ConsoleColor TextColor { get; protected set; }
 		public ConsoleColor BackgroundColor { get; protected set; }
@@ -26,7 +26,7 @@ namespace ZUtilLib.TUI
 
 		private readonly TUIElementBase? _parent;
 
-		protected TUIElementBase(TUIElementBase? parentElement, ushort? width, ushort? height, ushort? xLeftPos, ushort? yTopPos, int? zIndex, ConsoleColor? textColor, ConsoleColor? backgroundColor, ConsoleColor? borderColor)
+		protected TUIElementBase(TUIElementBase? parentElement, ushort? width, ushort? height, short? xLeftPos, short? yTopPos, int? zIndex, ConsoleColor? textColor, ConsoleColor? backgroundColor, ConsoleColor? borderColor)
 		{
 			// Check and assign nullable parent
 			if (parentElement == this) throw new ArgumentException($"TUIElementBase Critical Error: Parent of element cannot be itself.");
@@ -89,6 +89,9 @@ namespace ZUtilLib.TUI
 			return allDescendants;
 		}
 
-		internal abstract CharPoint[][] RenderElementMatrix();
+		/// <summary>
+		/// This should be defined regardless of element visibility.
+		/// </summary>
+		internal abstract CharPoint[,] RenderElementMatrix();
 	}
 }
